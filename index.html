@@ -1,4 +1,5 @@
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="color-scheme" content="light only">
 <meta name="robots" content="noindex,nofollow">
 <title>AI 助手共建手册</title>
 <style>
@@ -13,21 +14,10 @@
   --accent-tint:#e3eeeb;
   --stamp:#b8322a;
   --stamp-tint:#f6e4e1;
+  color-scheme:light;
   --serif:"Noto Serif SC","Songti SC","STSong",serif;
   --sans:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
-}
-@media (prefers-color-scheme: dark){
-  :root:not([data-theme="light"]){
-    color-scheme:dark;
-    --ground:#0f1513;--sheet:#161e1b;--ink:#e3e9e5;--muted:#93a19a;--rule:#2a3531;--rule-strong:#44544d;
-    --accent:#5fb8a8;--accent-tint:#1b2d29;--stamp:#e2665b;--stamp-tint:#2e1c1a;
-  }
-}
-:root[data-theme="dark"]{
-  color-scheme:dark;
-  --ground:#0f1513;--sheet:#161e1b;--ink:#e3e9e5;--muted:#93a19a;--rule:#2a3531;--rule-strong:#44544d;
-  --accent:#5fb8a8;--accent-tint:#1b2d29;--stamp:#e2665b;--stamp-tint:#2e1c1a;
 }
 *{box-sizing:border-box}
 body{background:var(--ground);color:var(--ink);font:16px/1.75 var(--sans);-webkit-font-smoothing:antialiased}
