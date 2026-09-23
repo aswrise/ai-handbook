@@ -1,0 +1,623 @@
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>AI 助手共建手册</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@600;700&family=Noto+Sans+SC:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --ground:#f3f5f3;
+  --sheet:#fbfcfb;
+  --ink:#17201c;
+  --muted:#5b6660;
+  --rule:#d3dad6;
+  --rule-strong:#9fb0a8;
+  --accent:#0f5c5a;
+  --accent-tint:#e3eeeb;
+  --stamp:#b8322a;
+  --stamp-tint:#f6e4e1;
+  --serif:"Noto Serif SC","Songti SC","STSong",serif;
+  --sans:"Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --ground:#0f1513;--sheet:#161e1b;--ink:#e3e9e5;--muted:#93a19a;--rule:#2a3531;--rule-strong:#44544d;
+    --accent:#5fb8a8;--accent-tint:#1b2d29;--stamp:#e2665b;--stamp-tint:#2e1c1a;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --ground:#0f1513;--sheet:#161e1b;--ink:#e3e9e5;--muted:#93a19a;--rule:#2a3531;--rule-strong:#44544d;
+  --accent:#5fb8a8;--accent-tint:#1b2d29;--stamp:#e2665b;--stamp-tint:#2e1c1a;
+}
+*{box-sizing:border-box}
+body{background:var(--ground);color:var(--ink);font:16px/1.75 var(--sans);-webkit-font-smoothing:antialiased}
+.wrap{max-width:1080px;margin:0 auto;padding-inline:20px;padding-block:56px 96px}
+h1,h2,h3{font-family:var(--serif);font-weight:700;margin:0;text-wrap:balance;letter-spacing:.01em}
+p{margin:0}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.label{font:500 12px/1.4 var(--mono);letter-spacing:.14em;text-transform:uppercase;color:var(--muted)}
+.num{font-family:var(--mono);font-variant-numeric:tabular-nums}
+
+/* 封面 */
+.cover{display:grid;gap:28px;padding-bottom:48px;border-bottom:1px solid var(--rule)}
+.cover h1{font-size:clamp(34px,5.4vw,56px);line-height:1.15}
+.cover .lede{font-size:clamp(17px,2vw,19px);color:var(--muted);max-width:40em}
+.toc{display:flex;flex-wrap:wrap;gap:10px 28px;font-size:15px}
+.toc a{text-decoration:none;color:var(--ink);border-bottom:1px solid var(--rule-strong);padding-bottom:2px}
+.toc a:hover{border-color:var(--accent);color:var(--accent)}
+.toc .num{color:var(--accent);margin-right:6px}
+
+section{padding-top:72px}
+.sec-head{display:grid;gap:12px;margin-bottom:32px;max-width:44em}
+.sec-head h2{font-size:clamp(26px,3.4vw,34px);line-height:1.25}
+.sec-head p{color:var(--muted)}
+
+/* 原则 */
+.principles{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0;border-top:2px solid var(--ink)}
+.principles div{padding:20px 24px 20px 0;border-bottom:1px solid var(--rule)}
+.principles h3{font-size:19px;margin-bottom:6px}
+.principles p{color:var(--muted);font-size:15px}
+
+/* 流程总览条 */
+.strip{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--rule-strong);background:var(--sheet);margin-bottom:40px;overflow:hidden}
+.strip div{padding:14px 14px 16px;border-right:1px solid var(--rule);position:relative;min-width:0}
+.strip div:last-child{border-right:0}
+.strip .num{font-size:12px;color:var(--muted)}
+.strip b{display:block;font-weight:700;font-size:15px;margin-top:2px}
+.strip .seal-mini{display:inline-block;margin-top:8px;font-size:11px;color:var(--stamp);border:1px solid var(--stamp);border-radius:999px;padding:0 8px;line-height:20px}
+.strip .quiet{display:inline-block;margin-top:8px;font-size:11px;color:var(--muted);line-height:22px}
+
+/* 阶段 */
+.stage{display:grid;grid-template-columns:200px 1fr;gap:28px;padding:32px 0;border-top:1px solid var(--rule)}
+.stage:first-of-type{border-top:2px solid var(--ink)}
+.stage-name{display:grid;align-content:start;gap:6px}
+.stage-name .num{font-size:13px;color:var(--accent)}
+.stage-name h3{font-size:22px;line-height:1.3}
+.stage-name p{font-size:14px;color:var(--muted)}
+.stage-body{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.col h4{margin:0 0 8px;font:500 13px/1.4 var(--sans);color:var(--muted);letter-spacing:.06em}
+.col ul{margin:0;padding:0;list-style:none;display:grid;gap:8px;font-size:15px}
+.col li{padding-left:14px;position:relative}
+.col li::before{content:"";position:absolute;left:0;top:.8em;width:5px;height:1px;background:var(--rule-strong)}
+.col.confirm{background:var(--stamp-tint);padding:14px 16px 16px;position:relative}
+.col.confirm h4{color:var(--stamp)}
+.col.confirm li::before{background:var(--stamp)}
+.seal{position:absolute;top:-14px;right:-8px;width:52px;height:52px;border:2px solid var(--stamp);border-radius:50%;display:grid;place-items:center;color:var(--stamp);font:700 13px/1.1 var(--serif);text-align:center;transform:rotate(-12deg);background:var(--stamp-tint)}
+.col.plain{background:var(--accent-tint);padding:14px 16px 16px}
+.col.plain h4{color:var(--accent)}
+.note{margin-top:16px;font-size:14px;color:var(--muted);grid-column:1/-1;border-left:2px solid var(--accent);padding-left:12px}
+
+/* 问卷 */
+.sheet{background:var(--sheet);border:1px solid var(--rule-strong);padding:40px clamp(18px,4vw,48px) 48px;position:relative}
+.sheet-top{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:16px;border-bottom:2px solid var(--ink);padding-bottom:16px;margin-bottom:8px}
+.sheet-top h3{font-size:24px}
+.sheet-meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:0 24px;margin:16px 0 8px}
+.field{display:flex;gap:8px;align-items:flex-end;padding:10px 0;border-bottom:1px solid var(--rule)}
+.field span{white-space:nowrap;font-size:14px;color:var(--muted)}
+.field i{flex:1;min-height:1.4em}
+.copy{font:500 14px var(--sans);color:var(--accent);background:transparent;border:1px solid var(--accent);padding:6px 14px;cursor:pointer}
+.copy:hover{background:var(--accent-tint)}
+.part{margin-top:36px}
+.part-title{display:flex;align-items:baseline;gap:12px;padding-bottom:8px;border-bottom:1px solid var(--rule-strong)}
+.part-title .num{color:var(--accent);font-size:14px}
+.part-title h4{margin:0;font:700 18px/1.4 var(--serif)}
+.q{display:grid;grid-template-columns:40px 1fr;gap:4px 8px;padding:16px 0;border-bottom:1px dashed var(--rule)}
+.q .num{color:var(--muted);font-size:14px;padding-top:2px}
+.q p{font-weight:500}
+.q .hint{grid-column:2;font-size:14px;color:var(--muted)}
+.q .opts{grid-column:2;display:flex;flex-wrap:wrap;gap:6px 22px;font-size:15px}
+.q .line{grid-column:2;height:28px;border-bottom:1px solid var(--rule-strong)}
+.q .line.tall{height:84px;background:repeating-linear-gradient(to bottom,transparent 0 27px,var(--rule) 27px 28px)}
+.table-wrap{grid-column:1/-1;overflow-x:auto;margin-top:8px}
+table{border-collapse:collapse;width:100%;min-width:720px;font-size:14px}
+th,td{border:1px solid var(--rule-strong);padding:8px 10px;text-align:left;vertical-align:top}
+th{background:var(--accent-tint);font-weight:500}
+td{height:44px}
+td.eg{color:var(--muted);font-size:13px;height:auto}
+.attach{grid-column:1/-1;display:grid;gap:10px;margin-top:4px}
+.attach div{display:grid;grid-template-columns:24px 1fr;gap:8px;font-size:15px}
+.privacy{margin-top:28px;font-size:14px;color:var(--muted);padding:14px 16px;border:1px solid var(--rule)}
+
+/* 数据方式 */
+.data-ways{margin-top:40px;display:grid;gap:14px}
+.data-ways h3{font-size:22px}
+.data-lede,.data-why{color:var(--muted);max-width:44em}
+.data-why{font-size:14.5px;border-left:2px solid var(--stamp);padding-left:12px}
+.ways{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:16px}
+.way{background:var(--sheet);border:1px solid var(--rule);padding:18px 20px 20px;display:grid;gap:8px;align-content:start}
+.way .num{font-size:12px;color:var(--accent)}
+.way h4{margin:0;font:700 17px/1.4 var(--serif)}
+.way p{font-size:14.5px;color:var(--muted)}
+.way .use{font-size:13px;color:var(--accent);border-top:1px solid var(--rule);padding-top:8px}
+.way .use.warn{color:var(--stamp)}
+
+/* 六项需求 */
+.dept{margin-top:8px}
+.dept + .dept{margin-top:48px}
+.dept-head{display:flex;align-items:baseline;gap:14px;margin-bottom:16px}
+.dept-head h3{font-size:22px}
+.needs{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px}
+.need{background:var(--sheet);border:1px solid var(--rule);padding:20px 22px 22px;display:grid;gap:14px;align-content:start}
+.need header{display:grid;gap:4px}
+.need .num{font-size:12px;color:var(--accent)}
+.need h4{margin:0;font:700 18px/1.4 var(--serif)}
+.need h5{margin:0 0 6px;font:500 13px/1.4 var(--sans);color:var(--muted);letter-spacing:.06em}
+.need ul{margin:0;padding-left:18px;display:grid;gap:4px;font-size:14.5px}
+.need .tip{font-size:14px;border-top:1px solid var(--rule);padding-top:12px;color:var(--muted)}
+.need .tip b{color:var(--ink);font-weight:500}
+
+/* 下一步 */
+.next{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0;border-top:2px solid var(--ink)}
+.next div{padding:20px 24px 20px 0;border-bottom:1px solid var(--rule)}
+.next .num{color:var(--accent);font-size:13px}
+.next p{margin-top:4px}
+footer{margin-top:64px;font-size:13px;color:var(--muted)}
+
+@media (max-width:860px){
+  .stage{grid-template-columns:1fr;gap:16px}
+  .stage-body{grid-template-columns:1fr}
+  .strip{grid-template-columns:1fr}
+  .strip div{border-right:0;border-bottom:1px solid var(--rule);display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 12px}
+  .strip div:last-child{border-bottom:0}
+  .strip b{margin-top:0}
+  .strip .seal-mini,.strip .quiet{margin-top:0}
+  .seal{right:6px}
+}
+@media (prefers-reduced-motion:no-preference){.copy{transition:background .15s}}
+</style>
+
+<div class="wrap">
+
+<header class="cover">
+  <span class="label">仓库 · 财务 · AI 助手</span>
+  <h1>AI 助手共建手册</h1>
+  <p class="lede">这份手册说明我们怎样和您一起，把仓库与财务的日常工作做成可用的 AI 助手：开始前请您填写什么，每个阶段我们交付什么，以及哪几个环节需要您确认。</p>
+  <nav class="toc" aria-label="目录">
+    <a href="#principles"><span class="num">1</span>合作原则</a>
+    <a href="#process"><span class="num">2</span>交付流程</a>
+    <a href="#questionnaire"><span class="num">3</span>初始问卷</a>
+    <a href="#needs"><span class="num">4</span>六项需求的补充问题</a>
+    <a href="#next"><span class="num">5</span>下一步</a>
+  </nav>
+</header>
+
+<section id="principles">
+  <div class="sec-head">
+    <span class="label">1 · 合作原则</span>
+    <h2>三条贯穿始终的原则</h2>
+  </div>
+  <div class="principles">
+    <div>
+      <h3>按您现在的做法来</h3>
+      <p>首期目标是让 AI 达到现在人工处理的水平，同时更快、更省力。我们不要求您先改流程、换系统。</p>
+    </div>
+    <div>
+      <h3>用真实单据说话</h3>
+      <p>一张真实单据和它的处理结果，比十段文字描述更有用。出过错、被退回的例子最有价值。</p>
+    </div>
+    <div>
+      <h3>关键动作由人把关</h3>
+      <p>AI 先做发现问题、起草结果这类工作。写入系统、对外发送这类动作，事先经您同意才让 AI 执行。</p>
+    </div>
+  </div>
+</section>
+
+<section id="process">
+  <div class="sec-head">
+    <span class="label">2 · 交付流程</span>
+    <h2>五个阶段，三次正式确认</h2>
+    <p>每个阶段都写明您需要提供什么、我们交付什么、您要确认什么。标有红色印章的三个环节需要业务负责人正式确认，确认后才进入下一阶段，避免后面的工作建立在误解上。</p>
+  </div>
+
+  <div class="strip" aria-hidden="true">
+    <div><span class="num">01</span><b>需求初筛</b><span class="quiet">选定首期</span></div>
+    <div><span class="num">02</span><b>业务梳理</b><span class="seal-mini">确认流程</span></div>
+    <div><span class="num">03</span><b>方案设计</b><span class="seal-mini">确认方案</span></div>
+    <div><span class="num">04</span><b>试做与测试</b><span class="quiet">判断测试结果</span></div>
+    <div><span class="num">05</span><b>试运行与上线</b><span class="seal-mini">确认上线</span></div>
+  </div>
+
+  <article class="stage">
+    <div class="stage-name">
+      <span class="num">阶段 01</span>
+      <h3>需求初筛</h3>
+      <p>弄清每项需求值不值得先做、能做到什么程度。</p>
+    </div>
+    <div class="stage-body">
+      <div class="col">
+        <h4>您提供</h4>
+        <ul>
+          <li>每项需求填写一份初始问卷（见第 3 部分）</li>
+          <li>每项需求附一两份单据或表格，以及人工处理后的最终结果，可以脱敏</li>
+        </ul>
+      </div>
+      <div class="col plain">
+        <h4>我们交付</h4>
+        <ul>
+          <li>需求评估：每项需求能做到什么程度、难点在哪里</li>
+          <li>每项需求需要哪些人、哪些材料配合</li>
+          <li>建议首期先做哪几项，以及理由</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h4>您决定</h4>
+        <ul>
+          <li>首期做哪几项</li>
+          <li>每项由谁对接</li>
+        </ul>
+      </div>
+    </div>
+  </article>
+
+  <article class="stage">
+    <div class="stage-name">
+      <span class="num">阶段 02</span>
+      <h3>业务梳理</h3>
+      <p>把现在的真实做法完整、准确地记录下来。</p>
+    </div>
+    <div class="stage-body">
+      <div class="col">
+        <h4>您提供</h4>
+        <ul>
+          <li>安排实际做这项工作的同事演示一遍完整操作，可以远程录屏</li>
+          <li>更多真实单据，尤其是出过错、被退回、需要特殊处理的</li>
+          <li>回答我们整理的补充问题，我们按人分发，每份只问对方清楚的事</li>
+        </ul>
+      </div>
+      <div class="col plain">
+        <h4>我们交付</h4>
+        <ul>
+          <li>业务流程图：每一步谁来做、看哪些资料、依据什么判断、结果交给谁</li>
+          <li>规则清单：标出哪些写在制度里，哪些只在群聊、电话或个人表格里，哪些靠经验</li>
+          <li>仍待确认的问题清单</li>
+        </ul>
+      </div>
+      <div class="col confirm">
+        <span class="seal">需您<br>确认</span>
+        <h4>请您确认</h4>
+        <ul>
+          <li>流程图和规则清单是否符合现在的真实做法</li>
+          <li>由业务负责人签字确认，这是后续一切工作的依据</li>
+        </ul>
+      </div>
+    </div>
+  </article>
+
+  <article class="stage">
+    <div class="stage-name">
+      <span class="num">阶段 03</span>
+      <h3>方案设计</h3>
+      <p>决定每一步由 AI 做、AI 与人配合，还是仍由人做。</p>
+    </div>
+    <div class="stage-body">
+      <div class="col">
+        <h4>您提供</h4>
+        <ul>
+          <li>IT 同事协助说明相关系统能否读取、能否写入，以及数据怎样导出</li>
+          <li>哪些事可以让 AI 直接做，哪些必须经人同意，哪些不能让 AI 碰</li>
+          <li>怎样算做对、哪些错误绝对不能接受</li>
+        </ul>
+      </div>
+      <div class="col plain">
+        <h4>我们交付</h4>
+        <ul>
+          <li>AI 处理方案：每一步是 AI 自动完成、AI 起草由人确认，还是仍由人来做</li>
+          <li>验收标准：达到什么准确率、哪些情况必须交给人</li>
+          <li>还缺的数据及补齐办法</li>
+          <li>工作量与费用明细</li>
+        </ul>
+      </div>
+      <div class="col confirm">
+        <span class="seal">需您<br>确认</span>
+        <h4>请您确认</h4>
+        <ul>
+          <li>处理方案与验收标准</li>
+          <li>AI 可以自动执行的动作范围</li>
+        </ul>
+      </div>
+    </div>
+  </article>
+
+  <article class="stage">
+    <div class="stage-name">
+      <span class="num">阶段 04</span>
+      <h3>试做与测试</h3>
+      <p>做出第一版，用大量测试情形检验它。</p>
+    </div>
+    <div class="stage-body">
+      <div class="col">
+        <h4>您配合</h4>
+        <ul>
+          <li>判断我们准备的测试情形处理得对不对</li>
+          <li>回答测试中暴露出的新问题</li>
+        </ul>
+      </div>
+      <div class="col plain">
+        <h4>我们交付</h4>
+        <ul>
+          <li>可以试用的第一版 AI 助手</li>
+          <li>测试报告：按验收标准逐项列出结果</li>
+        </ul>
+      </div>
+      <div class="col">
+        <h4>您判断</h4>
+        <ul>
+          <li>测试结果是否达到可以试运行的水平</li>
+        </ul>
+      </div>
+      <p class="note">测试情形大部分由我们根据规则和您提供的真实单据来准备，您不需要自己准备大量样例。我们会把设想的情形和处理方式列出来，请您逐条判断对不对。</p>
+    </div>
+  </article>
+
+  <article class="stage">
+    <div class="stage-name">
+      <span class="num">阶段 05</span>
+      <h3>试运行与上线</h3>
+      <p>在真实工作中并行运行，用结果决定是否正式使用。</p>
+    </div>
+    <div class="stage-body">
+      <div class="col">
+        <h4>您配合</h4>
+        <ul>
+          <li>试运行期间照常工作，同时核对 AI 的结果</li>
+          <li>AI 做错时，告诉我们正确做法和原因，并说明这是公司规定还是个人习惯</li>
+        </ul>
+      </div>
+      <div class="col plain">
+        <h4>我们交付</h4>
+        <ul>
+          <li>试运行报告：准确率、节省的时间、发现的问题与改进</li>
+          <li>正式上线后，定期提交运行报告；遇到新情况时发补充问题，持续改进</li>
+        </ul>
+      </div>
+      <div class="col confirm">
+        <span class="seal">需您<br>确认</span>
+        <h4>请您确认</h4>
+        <ul>
+          <li>正式使用、扩大范围、调整后继续试运行，还是暂停</li>
+        </ul>
+      </div>
+    </div>
+  </article>
+</section>
+
+<section id="questionnaire">
+  <div class="sec-head">
+    <span class="label">3 · 初始问卷</span>
+    <h2>每项需求填写一份</h2>
+    <p>这份问卷用于阶段 01 的需求初筛。请由实际做这项工作的同事填写，写不清楚的地方写「不清楚」即可，比空着更有用。填写大约需要 30 分钟。</p>
+  </div>
+
+  <div class="sheet" id="sheet">
+    <div class="sheet-top">
+      <h3>AI 助手需求初始问卷</h3>
+      <button class="copy" id="copy" type="button">复制问卷文字</button>
+    </div>
+    <div class="sheet-meta">
+      <div class="field"><span>部门</span><i></i></div>
+      <div class="field"><span>填写人</span><i></i></div>
+      <div class="field"><span>填写日期</span><i></i></div>
+    </div>
+
+    <div class="part">
+      <div class="part-title"><span class="num">一</span><h4>基本情况</h4></div>
+      <div class="q"><span class="num">1</span><p>这项工作叫什么？</p><span class="hint">例如：出库单检查、银行日记账录入</span><div class="line"></div></div>
+      <div class="q"><span class="num">2</span><p>由谁来做？共有几个人在做？</p><div class="line"></div></div>
+      <div class="q"><span class="num">3</span><p>做完的结果给谁用？他们拿去做什么？</p><div class="line"></div></div>
+      <div class="q"><span class="num">4</span><p>谁能判断这项工作做得对不对？</p><div class="line"></div></div>
+      <div class="q"><span class="num">5</span><p>我们有疑问时找谁？</p><span class="hint">请写姓名、岗位和联系方式</span><div class="line"></div></div>
+    </div>
+
+    <div class="part">
+      <div class="part-title"><span class="num">二</span><h4>现在是怎么做的</h4></div>
+      <div class="q"><span class="num">6</span><p>什么情况下开始做这项工作？</p><span class="hint">例如：收到银行流水后、每周一上午、仓库发来出库单时</span><div class="line"></div></div>
+      <div class="q"><span class="num">7</span><p>多久做一次？每次大约多长时间？</p><div class="line"></div></div>
+      <div class="q"><span class="num">8</span><p>请按顺序写下最近一次的操作步骤。</p><span class="hint">例如：① 从网银下载流水 Excel ② 打开日记账模板 ③ 逐行复制日期、金额 ④ 按摘要判断类别 ⑤ 查销售表确认客户 ⑥ 核对总额</span><div class="line tall"></div></div>
+      <div class="q"><span class="num">9</span><p>做的时候要打开哪些系统、表格或文件？</p><span class="hint">请写具体名称，例如「金蝶 出库单列表」「张三的批次台账.xlsx」，不要只写「ERP」「表格」</span><div class="line tall"></div></div>
+      <div class="q"><span class="num">10</span><p>做完后，结果写到哪里、交给谁？</p><span class="hint">例如：填回系统、发到微信群、打印交给主管</span><div class="line"></div></div>
+    </div>
+
+    <div class="part">
+      <div class="part-title"><span class="num">三</span><h4>用到的数据</h4></div>
+      <div class="q">
+        <span class="num">11</span><p>这项工作需要哪些数据？每种数据填一行。</p>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>数据名称与用途</th><th>从哪里来</th><th>现在谁、怎样拿到</th><th>多久更新一次</th><th>能否提供样例</th></tr></thead>
+            <tbody>
+              <tr><td class="eg">示例：银行流水，用于填日记账</td><td class="eg">工商银行网银</td><td class="eg">出纳每天登录下载 Excel</td><td class="eg">每天</td><td class="eg">可以，已脱敏</td></tr>
+              <tr><td></td><td></td><td></td><td></td><td></td></tr>
+              <tr><td></td><td></td><td></td><td></td><td></td></tr>
+              <tr><td></td><td></td><td></td><td></td><td></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="part">
+      <div class="part-title"><span class="num">四</span><h4>判断与规则</h4></div>
+      <div class="q"><span class="num">12</span><p>做这项工作时，需要判断哪些事？每个判断依据什么？</p><span class="hint">例如：批号是否一致，依据是库存表里的批次记录</span><div class="line tall"></div></div>
+      <div class="q"><span class="num">13</span><p>这些判断依据平时记录在哪里？可以多选。</p>
+        <div class="opts"><span>□ 公司制度或操作规范</span><span>□ 系统里有设置</span><span>□ 只在群聊或电话里沟通</span><span>□ 个人的表格或笔记</span><span>□ 靠经验，没有写下来</span></div>
+      </div>
+      <div class="q"><span class="num">14</span><p>新同事刚来时最常犯什么错？您会额外叮嘱他们什么？</p><span class="hint">这些往往是大家都知道、但没有写进制度的做法</span><div class="line tall"></div></div>
+      <div class="q"><span class="num">15</span><p>哪些情况不能按常规处理，需要按实际调整？请举例说明怎么调整。</p><div class="line tall"></div></div>
+      <div class="q"><span class="num">16</span><p>遇到拿不准的情况，一般找谁？通过什么方式？</p>
+        <div class="opts"><span>□ 电话</span><span>□ 微信或企业微信群</span><span>□ 当面</span><span>□ 其他：＿＿＿＿</span></div>
+        <div class="line"></div>
+      </div>
+    </div>
+
+    <div class="part">
+      <div class="part-title"><span class="num">五</span><h4>期望与边界</h4></div>
+      <div class="q"><span class="num">17</span><p>现在最头疼的是什么？可以多选。</p>
+        <div class="opts"><span>□ 太费时间</span><span>□ 容易出错</span><span>□ 容易遗漏</span><span>□ 要反复沟通</span><span>□ 其他：＿＿＿＿</span></div>
+      </div>
+      <div class="q"><span class="num">18</span><p>希望 AI 做到哪一步？</p>
+        <div class="opts"><span>□ 发现问题并提醒</span><span>□ 生成草稿，由人确认</span><span>□ 直接完成并写入系统</span></div>
+      </div>
+      <div class="q"><span class="num">19</span><p>哪些事情绝对不能让 AI 自动做？</p><div class="line"></div></div>
+      <div class="q"><span class="num">20</span><p>哪些错误是绝对不能接受的？目前大约多久会出一次错？</p><div class="line"></div></div>
+    </div>
+
+    <div class="part">
+      <div class="part-title"><span class="num">六</span><h4>请随问卷附上的材料</h4></div>
+      <div class="attach">
+        <div><span>□</span><span>1～3 份真实输入，以及人工处理后的最终结果，一一对应</span></div>
+        <div><span>□</span><span>出过错或被退回的例子，以及当时是怎么改的（如有）</span></div>
+        <div><span>□</span><span>用到的模板、制度文件、字段说明（如有）</span></div>
+        <div><span>□</span><span>一段完整操作的录屏（如方便）</span></div>
+      </div>
+    </div>
+
+    <p class="privacy">所有材料只用于本项目，不外传。不方便提供原始数据时，请看下方的三种方式。</p>
+  </div>
+
+  <div class="data-ways">
+    <h3>不方便提供真实数据怎么办</h3>
+    <p class="data-lede">我们理解业务数据敏感。下面三种方式都可以，区别在于能用到哪个阶段。</p>
+    <div class="ways">
+      <div class="way">
+        <span class="num">方式一 · 推荐</span>
+        <h4>脱敏后的真实数据</h4>
+        <p>把客户名、人名、账号替换成代号，金额可以统一乘一个系数。表格格式、列名、空白、备注、原本的错误请保持原样。</p>
+        <span class="use">可用于全部阶段</span>
+      </div>
+      <div class="way">
+        <span class="num">方式二</span>
+        <h4>数据不离开贵司</h4>
+        <p>我们到现场或远程，在贵司的电脑和环境里处理和测试，只带走测试结果，不带走数据。</p>
+        <span class="use">可用于全部阶段</span>
+      </div>
+      <div class="way">
+        <span class="num">方式三</span>
+        <h4>模拟数据</h4>
+        <p>按真实格式编一些数据，用来梳理流程、搭建第一版。</p>
+        <span class="use warn">可用于阶段 01–04，验收与试运行须用真实数据</span>
+      </div>
+    </div>
+    <p class="data-why">模拟数据往往比真实数据整齐：没有奇怪的格式，没有临时的调整，也没有真实的错误分布。只用模拟数据测试，结果会比实际使用时好看，上线后才暴露问题。因此验收与试运行一定在真实数据上进行，可以用方式一或方式二完成。</p>
+  </div>
+</section>
+
+<section id="needs">
+  <div class="sec-head">
+    <span class="label">4 · 六项需求的补充问题</span>
+    <h2>针对您目前提出的需求</h2>
+    <p>填写初始问卷时，请结合下面各项需求的补充问题一起回答。初筛只需要少量材料；选定首期后再补充其余部分。大量测试样例由我们根据这些材料来准备。</p>
+  </div>
+
+  <div class="dept">
+    <div class="dept-head"><span class="label">仓库部门</span><h3>三项需求</h3></div>
+    <div class="needs">
+      <article class="need">
+        <header><span class="num">仓库 1</span><h4>AI 检查单据</h4></header>
+        <div><h5>我们想了解</h5><ul>
+          <li>现在人工检查哪几项？</li>
+          <li>批号拿什么来比对：库存表、系统记录，还是实物标签？</li>
+          <li>销售出库、退货、红字冲销、盘亏等不同单据，数量正负规则分别是什么？</li>
+          <li>效期怎么判断：过期不能出库？临近效期多少天需要提醒？</li>
+        </ul></div>
+        <div><h5>初筛时准备</h5><ul><li>2～3 张正常单据</li><li>1～2 张出过错的单据，以及错在哪里</li></ul></div>
+        <div><h5>选定首期后再补</h5><ul><li>5～10 张出过错的历史单据</li><li>现行检查规则</li><li>物料、批次与效期数据</li></ul></div>
+      </article>
+      <article class="need">
+        <header><span class="num">仓库 2</span><h4>库存预警与消耗预测</h4></header>
+        <div><h5>我们想了解</h5><ul>
+          <li>怎样算缺货、呆滞、临期？标准由谁来定？</li>
+          <li>现在怎么决定备多少货？</li>
+          <li>有没有安全库存、采购周期这类设置？</li>
+        </ul></div>
+        <div><h5>初筛时准备</h5><ul><li>一份当前库存表</li><li>一两次人工备货的决定及理由</li></ul></div>
+        <div><h5>选定首期后再补</h5><ul><li>尽量长的出入库记录，有一年最好</li><li>物料资料，含安全库存、采购周期（如有）</li></ul></div>
+        <p class="tip"><b>说明：</b>消耗预测的准确度取决于历史数据的质量。我们建议首期先做按规则的缺货、呆滞、临期提醒，预测部分在评估数据后再确定。</p>
+      </article>
+      <article class="need">
+        <header><span class="num">仓库 3</span><h4>周报、月报与盘点差异报告</h4></header>
+        <div><h5>我们想了解</h5><ul>
+          <li>这几份报表现在是什么样子？数据从哪里来？</li>
+          <li>谁看这些报表，最关心哪几项？</li>
+          <li>盘点差异出现后，现在怎么查原因？</li>
+        </ul></div>
+        <div><h5>初筛时准备</h5><ul><li>最近一期的报表</li></ul></div>
+        <div><h5>选定首期后再补</h5><ul><li>最近 3 期报表及生成它们的原始数据</li></ul></div>
+      </article>
+    </div>
+  </div>
+
+  <div class="dept">
+    <div class="dept-head"><span class="label">财务部门</span><h3>三项需求</h3></div>
+    <div class="needs">
+      <article class="need">
+        <header><span class="num">财务 1</span><h4>银行日记账自动录入</h4></header>
+        <div><h5>我们想了解</h5><ul>
+          <li>银行流水从哪里下载？是什么格式？</li>
+          <li>要填的表格有哪些栏目？</li>
+          <li>哪些栏目不能照原数据填写、需要按实际调整？按什么调整？</li>
+        </ul></div>
+        <div><h5>初筛时准备</h5><ul><li>一段银行原始流水和对应填好的日记账</li><li>要填写的表格模板</li></ul></div>
+        <div><h5>选定首期后再补</h5><ul><li>10 个左右需要调整的例子：调整前、调整后、为什么这样调</li></ul></div>
+        <p class="tip"><b>说明：</b>需要按实际调整的部分是这项需求的关键。这类例子请尽量用真实记录，模拟数据里通常体现不出这些调整。</p>
+      </article>
+      <article class="need">
+        <header><span class="num">财务 2</span><h4>日记账分类汇总与图表</h4></header>
+        <div><h5>我们想了解</h5><ul>
+          <li>按哪种分类汇总？分类规则由谁来定？</li>
+          <li>有没有不按常规归类的例外？</li>
+          <li>汇总后要做哪些分析、画哪些图？</li>
+        </ul></div>
+        <div><h5>初筛时准备</h5><ul><li>现有的一份汇总表和图表</li></ul></div>
+        <div><h5>选定首期后再补</h5><ul><li>生成它所用的一段银行日记账</li></ul></div>
+      </article>
+      <article class="need">
+        <header><span class="num">财务 3</span><h4>销售经营分析</h4></header>
+        <div><h5>我们想了解</h5><ul>
+          <li>渠道、区域、部门怎么划分？有没有对照表？</li>
+          <li>销售增长怎么算：同比还是环比？</li>
+          <li>退货单、取消单怎么处理？</li>
+        </ul></div>
+        <div><h5>初筛时准备</h5><ul><li>一个月的销售订单表</li><li>渠道、区域、部门对照表</li></ul></div>
+        <div><h5>选定首期后再补</h5><ul><li>各栏目说明</li><li>同期的退货单、取消单</li></ul></div>
+        <p class="tip"><b>建议：</b>请选一个真实月份，按您现在的方法完整算一遍，并把结果给我们。这是暴露口径差异最快的办法。</p>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section id="next">
+  <div class="sec-head">
+    <span class="label">5 · 下一步</span>
+    <h2>从一份问卷开始</h2>
+  </div>
+  <div class="next">
+    <div><span class="num">第一步</span><p>请为每项需求指定一位熟悉这项工作的同事。</p></div>
+    <div><span class="num">第二步</span><p>由这位同事填写初始问卷，并附上第 3、4 部分列出的材料。</p></div>
+    <div><span class="num">第三步</span><p>我们收到后整理需求评估，与您一起选定首期要做的需求。</p></div>
+  </div>
+  <footer>本手册中的单据名称、系统名称与填写示例仅作说明，不代表贵司的实际数据。</footer>
+</section>
+
+</div>
+
+<script>
+(function(){
+  var btn=document.getElementById('copy');
+  btn.addEventListener('click',function(){
+    var text=document.getElementById('sheet').innerText.replace('复制问卷文字','').replace(/\n{3,}/g,'\n\n').trim();
+    function done(msg){btn.textContent=msg;setTimeout(function(){btn.textContent='复制问卷文字';},1800);}
+    function fallback(){
+      var r=document.createRange();r.selectNodeContents(document.getElementById('sheet'));
+      var s=window.getSelection();s.removeAllRanges();s.addRange(r);
+      done('已选中，请按 Ctrl+C');
+    }
+    try{
+      navigator.clipboard.writeText(text).then(function(){done('已复制');},fallback);
+    }catch(e){fallback();}
+  });
+})();
+</script>
